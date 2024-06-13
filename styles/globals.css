@@ -40,6 +40,12 @@
   --card-border-rgb: 131, 134, 135;
 }
 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -87,12 +93,6 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
 }
 
 a {
@@ -104,4 +104,12 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+.text-red {
+  color: red;
+}
+
+.background-black {
+  background-color: black;
 }
