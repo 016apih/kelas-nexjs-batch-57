@@ -3,7 +3,10 @@ import React from 'react'
 
 const Profile = () => {
    return (
-      <Layout>
+      <Layout 
+         metaTitle={"Profile"} 
+         metaDescription={"Semua informasi ini adalah seputar profile user"}
+      >
          <p>Profile</p>
       </Layout>
    )
