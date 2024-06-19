@@ -12,6 +12,7 @@ const Menu = () => {
    return (
       <div>
          <Link href='/' className={bgActive("/")}>Home</Link> | &nbsp; 
+         <Link href='/users' className={bgActive("/users")}>Users</Link> | &nbsp; 
          <Link href='/profile' className={bgActive("/profile")}>Profile</Link>
       </div>
    )
