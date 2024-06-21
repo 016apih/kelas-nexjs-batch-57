@@ -1,5 +1,10 @@
-import Layout from "@/layout";
 import { useEffect } from "react";
+
+// import Layout from "@/layout";
+// import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const LayoutComponent = dynamic(() => import('@/layout'));
 
 export default function Main() {
 
@@ -8,10 +13,13 @@ export default function Main() {
          .then(res => res.json)
          .then(res => console.log('response => ', res))
          .catch(err => console.log('response => ', err))
-   },[])
+   },[]);
+
    return (
-      <Layout metaTitle={"Home"}>
+      <LayoutComponent metaTitle={"Home"}>
          <p>Main</p>
-      </Layout>
+         {/* <Image src="/next.png" width={400} height={400} alt="next img" />
+         <img src="/next.png" style={{ width:400, height: 400 }} alt="next img" /> */}
+      </LayoutComponent>
    );
 }
