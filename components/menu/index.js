@@ -2,6 +2,14 @@ import React, { useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+const menus = [
+   { path: '/', title: 'Home' },
+   { path: '/users', title: 'Users' },
+   { path: '/profile', title: 'Profile' },
+   { path: '/notes', title: 'Notes' },
+   { path: '/posts', title: 'Posts' },
+]
+
 const Menu = () => {
    const { pathname } = useRouter();
 
@@ -11,9 +19,14 @@ const Menu = () => {
 
    return (
       <div>
-         <Link href='/' className={bgActive("/")}>Home</Link> | &nbsp; 
-         <Link href='/users' className={bgActive("/users")}>Users</Link> | &nbsp; 
-         <Link href='/profile' className={bgActive("/profile")}>Profile</Link>
+         {menus.map((d, id) => (
+            <div key={"menus-" + id} className='inline-block'>
+               <Link href={d.path} className={bgActive(d.path)}>
+                  {d.title}
+               </Link>
+               {id < menus.length - 1  && <> | &nbsp; </>}
+            </div>
+         ))}
       </div>
    )
 }
