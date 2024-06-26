@@ -1,4 +1,6 @@
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import {
    Box,
    Flex,
@@ -12,8 +14,6 @@ import {
    Text,
    Button,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 const LayoutComponent = dynamic(() => import("@/layout"));
 
@@ -29,7 +29,19 @@ export default function Notes() {
       }
 
       fetchingData();
-   }, [])
+   }, []);
+
+   const HandleDelete = async (id) => {
+      try {
+         const response = await fetch(`https://service.pace-unv.cloud/api/notes/delete/${id}`, {
+            method: "DELETE",
+         });
+         const result = await response.json();
+         if (result?.success) {
+            router.reload();
+         }
+      } catch (error) { }
+   };
 
    return (
       <LayoutComponent metaTitle={"Notes"}>
@@ -43,9 +55,9 @@ export default function Notes() {
                </Button>
             </Flex>
             <Flex>
-               <Grid templateColumns="repeat(3, 1fr)" gap={5} className="border">
+               <Grid templateColumns="repeat(3, 1fr)" gap={5}>
                   {notes?.data?.map((item, id) => (
-                     <GridItem key={"key-"+id} className="border p-2">
+                     <GridItem key={"key-" + id}>
                         <Card>
                            <CardHeader>
                               <Heading>{item?.title}</Heading>
@@ -64,6 +76,7 @@ export default function Notes() {
                               <Button
                                  flex="1"
                                  colorScheme="red"
+                                 onClick={() => HandleDelete(item?.id)}
                               >
                                  Delete
                               </Button>
