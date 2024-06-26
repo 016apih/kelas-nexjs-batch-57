@@ -1,27 +1,79 @@
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import {
+   Box,
+   Flex,
+   Grid,
+   GridItem,
+   Card,
+   CardBody,
+   CardHeader,
+   CardFooter,
+   Heading,
+   Text,
+   Button,
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-const LayoutComponent = dynamic(() => import('@/layout'));
+const LayoutComponent = dynamic(() => import("@/layout"));
 
-export default function Notes({ notes }) {
+export default function Notes() {
+   const router = useRouter();
+   const [notes, setNotes] = useState();
+
+   useEffect(() => {
+      async function fetchingData() {
+         const res = await fetch('https://service.pace-unv.cloud/api/notes');
+         const listNotes = await res.json();
+         setNotes(listNotes);
+      }
+
+      fetchingData();
+   }, [])
 
    return (
       <LayoutComponent metaTitle={"Notes"}>
-         {notes?.data?.map((d, id) => (
-            <Link href={`/notes/${d.id}`} key={"notes-"+id}>
-               <div className="border border-gray-500 mb-2 p-2 m-2">
-                  <p>{d.title}</p>
-                  <p>{d.description}</p>
-               </div>
-            </Link>
-         ))}
+         <Box padding="5">
+            <Flex justifyContent="end">
+               <Button
+                  colorScheme="blue"
+                  onClick={() => router.push("/notes/add")}
+               >
+                  Add Notes
+               </Button>
+            </Flex>
+            <Flex>
+               <Grid templateColumns="repeat(3, 1fr)" gap={5} className="border">
+                  {notes?.data?.map((item, id) => (
+                     <GridItem key={"key-"+id} className="border p-2">
+                        <Card>
+                           <CardHeader>
+                              <Heading>{item?.title}</Heading>
+                           </CardHeader>
+                           <CardBody>
+                              <Text>{item?.description}</Text>
+                           </CardBody>
+                           <CardFooter justify="space-between" flexWrap="wrap">
+                              <Button
+                                 onClick={() => router.push(`/notes/edit/${item?.id}`)}
+                                 flex="1"
+                                 variant="ghost"
+                              >
+                                 Edit
+                              </Button>
+                              <Button
+                                 flex="1"
+                                 colorScheme="red"
+                              >
+                                 Delete
+                              </Button>
+                           </CardFooter>
+                        </Card>
+                     </GridItem>
+                  ))}
+               </Grid>
+            </Flex>
+         </Box>
       </LayoutComponent>
    );
-}
-
-export async function getStaticProps(){
-   const res = await fetch('https://service.pace-unv.cloud/api/notes');
-   const notes = await res.json();
-
-   return { props: { notes }, revalidate: 10 }
 }
