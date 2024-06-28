@@ -12,30 +12,37 @@ import {
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import useMutation from "@/hooks/useMutation";
 const LayoutComponent = dynamic(() => import("@/layout"));
 
 const AddNotes = () => {
-
+   const { mutate } = useMutation();
    const router = useRouter();
    const [notes, setNotes] = useState({ title: '', description: '' });
 
-   const HandleSubmit = async () => {
-      try {
-         const response = await fetch(
-            "https://service.pace-unv.cloud/api/notes",
-            {
-               method: "POST",
-               headers: {
-                  "Content-Type": "application/json",
-               },
-               body: JSON.stringify(notes),
-            }
-         );
-         const result = await response.json();
-         if (result?.success) {
-            router.push("/notes");
-         }
-      } catch (error) { }
+   const handleSubmit = async () => {
+      const resp = await mutate({
+         url: 'https://service.pace-unv.cloud/api/notes',
+         payload: notes,
+         method: 'POST'
+      });
+      resp?.success && router.push("/notes");
+      // try {
+      //    const response = await fetch(
+      //       "https://service.pace-unv.cloud/api/notes",
+      //       {
+      //          method: "POST",
+      //          headers: {
+      //             "Content-Type": "application/json",
+      //          },
+      //          body: JSON.stringify(notes),
+      //       }
+      //    );
+      //    const result = await response.json();
+      //    if (result?.success) {
+      //       router.push("/notes");
+      //    }
+      // } catch (error) { }
    };
 
    return (
@@ -61,7 +68,7 @@ const AddNotes = () => {
                   />
                </GridItem>
                <GridItem>
-                  <Button onClick={() => HandleSubmit()} colorScheme="blue">
+                  <Button onClick={handleSubmit} colorScheme="blue">
                      Submit
                   </Button>
                </GridItem>

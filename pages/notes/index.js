@@ -15,10 +15,12 @@ import {
    Button,
 } from "@chakra-ui/react";
 
+import useQueries from "@/hooks/useQueries";
 const LayoutComponent = dynamic(() => import("@/layout"));
 
 export default function Notes() {
    const router = useRouter();
+   const { data: listNotes } = useQueries({ prefixUrl: 'https://service.pace-unv.cloud/api/notes' })
    const [notes, setNotes] = useState();
 
    useEffect(() => {
@@ -56,7 +58,7 @@ export default function Notes() {
             </Flex>
             <Flex>
                <Grid templateColumns="repeat(3, 1fr)" gap={5}>
-                  {notes?.data?.map((item, id) => (
+                  {listNotes?.data?.map((item, id) => (
                      <GridItem key={"key-" + id}>
                         <Card>
                            <CardHeader>
