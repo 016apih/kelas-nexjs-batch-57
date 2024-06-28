@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import {
    Box,
    Flex,
@@ -15,23 +14,30 @@ import {
    Button,
 } from "@chakra-ui/react";
 
+import { useEffect, useState } from "react";
 import useQueries from "@/hooks/useQueries";
+import useSWR from "swr";
+import fetcher from "@/utils/fetcher";
 const LayoutComponent = dynamic(() => import("@/layout"));
 
 export default function Notes() {
    const router = useRouter();
-   const { data: listNotes } = useQueries({ prefixUrl: 'https://service.pace-unv.cloud/api/notes' })
-   const [notes, setNotes] = useState();
+   const { data, isLoading } = useSWR('https://service.pace-unv.cloud/api/notes', 
+      fetcher,
+      { revalidateOnFocus: true }
+   );
+   // const { data: listNotes } = useQueries({ prefixUrl: 'https://service.pace-unv.cloud/api/notes' })
+   // const [notes, setNotes] = useState();
 
-   useEffect(() => {
-      async function fetchingData() {
-         const res = await fetch('https://service.pace-unv.cloud/api/notes');
-         const listNotes = await res.json();
-         setNotes(listNotes);
-      }
+   // useEffect(() => {
+   //    async function fetchingData() {
+   //       const res = await fetch('https://service.pace-unv.cloud/api/notes');
+   //       const listNotes = await res.json();
+   //       setNotes(listNotes);
+   //    }
 
-      fetchingData();
-   }, []);
+   //    fetchingData();
+   // }, []);
 
    const HandleDelete = async (id) => {
       try {
@@ -44,6 +50,8 @@ export default function Notes() {
          }
       } catch (error) { }
    };
+
+   if(isLoading) return <div>Please wait...</div>
 
    return (
       <LayoutComponent metaTitle={"Notes"}>
@@ -58,7 +66,7 @@ export default function Notes() {
             </Flex>
             <Flex>
                <Grid templateColumns="repeat(3, 1fr)" gap={5}>
-                  {listNotes?.data?.map((item, id) => (
+                  {data?.data?.map((item, id) => (
                      <GridItem key={"key-" + id}>
                         <Card>
                            <CardHeader>
