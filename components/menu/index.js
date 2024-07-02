@@ -1,11 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { Menu, MenuButton, MenuList, MenuItem, Button, Avatar, useToast } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
+
 import useQueries from '@/hooks/useQueries';
 import useMutation, { baseURL } from '@/hooks/useMutation';
+import { UserContext } from '@/context/useContext';
 
 const menus = [
    { path: '/', title: 'Home' },
@@ -19,9 +21,10 @@ const MenuHeader = () => {
    const { pathname, push } = useRouter();
    const { mutate } = useMutation();
    const toast = useToast();
-   const { data } = useQueries({ prefixUrl: `${baseURL}/user/me`, headers: {
-      'Authorization': `Bearer ${Cookies.get('user_token')}`
-   } });
+   const userData = useContext(UserContext);
+   // const { data } = useQueries({ prefixUrl: `${baseURL}/user/me`, headers: {
+   //    'Authorization': `Bearer ${Cookies.get('user_token')}`
+   // } });
    
    const bgActive = useCallback((path) => {
       return path === pathname ? "bg-blue-300 font-bold" : ""
@@ -58,17 +61,13 @@ const MenuHeader = () => {
                :  <> | &nbsp; 
                   <Menu className='mx-2'>
                      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                        <Avatar name={data?.data?.name} src='' width={9} height={9} />
+                        <Avatar name={userData?.data?.name} src='' width={9} height={9} />
                      </MenuButton>
                      <MenuList>
                         <div className='px-2 py-3'>
-                           {data?.data?.name}
+                           {userData?.data?.name}
                         </div>
                         <MenuItem onClick={onLogout}>Logout</MenuItem>
-                        {/* <MenuItem>Create a Copy</MenuItem>
-                        <MenuItem>Mark as Draft</MenuItem>
-                        <MenuItem>Delete</MenuItem>
-                        <MenuItem>Attend a Workshop</MenuItem> */}
                      </MenuList>
                   </Menu>
                </> }
