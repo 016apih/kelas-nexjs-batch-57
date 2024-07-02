@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import Swal from 'sweetalert2';
 import {
    Grid,
    GridItem,
@@ -13,34 +12,32 @@ import {
    Textarea,
 } from "@chakra-ui/react";
 
-import { checkEnv } from "@/utils/checkEnv";
-import useMutation from "@/hooks/useMutation";
-
 const LayoutComponent = dynamic(() => import("@/layout"));
 
 const EditNotes = () => {
    const router = useRouter();
-   const { mutate } = useMutation();
    const { id } = router?.query;
    const [notes, setNotes] = useState()
 
-   const onSubmit = async () => {
-      const resp = await mutate({
-         url: `${checkEnv()}/api/notes/${id}`,
-         method: 'PATCH',
-         payload: { title: notes?.title, description: notes?.description },
-      });
-      resp?.success && router.push("/");
-      Swal.fire({
-         title: "Success!",
-         text: "Note successfully edited!",
-         icon: resp?.success ? 'success' : 'error'
-      });
+   const HandleSubmit = async () => {
+      try {
+         const response = await fetch(`https://service.pace-unv.cloud/api/notes/update/${id}`, {
+            method: "PATCH",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: notes?.title, description: notes?.description }),
+         });
+         const result = await response.json();
+         if (result?.success) {
+            router.push("/notes");
+         }
+      } catch (error) { }
    };
 
    useEffect(() => {
       async function fetchingData() {
-         const res = await fetch(`${checkEnv()}/api/notes/${id}`);
+         const res = await fetch(`https://service.pace-unv.cloud/api/notes/${id}`);
          const listNotes = await res.json();
          setNotes(listNotes?.data)
       }
@@ -48,7 +45,7 @@ const EditNotes = () => {
    }, [id]);
 
    return (
-      <LayoutComponent metaTitle="Detail">
+      <LayoutComponent metaTitle="Notes">
          <Card margin="5" padding="5">
             <Heading>Edit Notes</Heading>
             <Grid gap="5">
@@ -57,18 +54,22 @@ const EditNotes = () => {
                   <Input
                      type="text"
                      value={notes?.title || ""}
-                     onChange={(e) => setNotes({ ...notes, title: e.target.value }) }
+                     onChange={(event) =>
+                        setNotes({ ...notes, title: event.target.value })
+                     }
                   />
                </GridItem>
                <GridItem>
                   <Text>Description</Text>
                   <Textarea
                      value={notes?.description || ""}
-                     onChange={(e) => setNotes({ ...notes, description: e.target.value }) }
+                     onChange={(event) =>
+                        setNotes({ ...notes, description: event.target.value })
+                     }
                   />
                </GridItem>
                <GridItem>
-                  <Button onClick={() => onSubmit()} colorScheme="blue">
+                  <Button onClick={() => HandleSubmit()} colorScheme="blue">
                      Submit
                   </Button>
                </GridItem>

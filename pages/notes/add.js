@@ -1,7 +1,4 @@
-import { useState } from "react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import Swal from 'sweetalert2';
 import {
    Grid,
    GridItem,
@@ -12,10 +9,10 @@ import {
    Input,
    Textarea,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
-import { checkEnv } from "@/utils/checkEnv";
 import useMutation from "@/hooks/useMutation";
-
 const LayoutComponent = dynamic(() => import("@/layout"));
 
 const AddNotes = () => {
@@ -23,22 +20,33 @@ const AddNotes = () => {
    const router = useRouter();
    const [notes, setNotes] = useState({ title: '', description: '' });
 
-   const onSubmit = async () => {
+   const handleSubmit = async () => {
       const resp = await mutate({
-         url: `${checkEnv()}/api/notes`,
+         url: 'https://service.pace-unv.cloud/api/notes',
          payload: notes,
          method: 'POST'
       });
-      resp?.success && router.push("/");
-      Swal.fire({
-         title: "Success!",
-         text: "Note successfully added!",
-         icon: resp?.success ? 'success' : 'error'
-      });
+      resp?.success && router.push("/notes");
+      // try {
+      //    const response = await fetch(
+      //       "https://service.pace-unv.cloud/api/notes",
+      //       {
+      //          method: "POST",
+      //          headers: {
+      //             "Content-Type": "application/json",
+      //          },
+      //          body: JSON.stringify(notes),
+      //       }
+      //    );
+      //    const result = await response.json();
+      //    if (result?.success) {
+      //       router.push("/notes");
+      //    }
+      // } catch (error) { }
    };
 
    return (
-      <LayoutComponent metaTitle="Add">
+      <LayoutComponent metaTitle="Notes">
          <Card margin="5" padding="5">
             <Heading>Add Notes</Heading>
             <Grid gap="5">
@@ -46,17 +54,21 @@ const AddNotes = () => {
                   <Text>Title</Text>
                   <Input
                      type="text"
-                     onChange={(e) =>setNotes({ ...notes, title: e.target.value }) }
+                     onChange={(event) =>
+                        setNotes({ ...notes, title: event.target.value })
+                     }
                   />
                </GridItem>
                <GridItem>
                   <Text>Description</Text>
                   <Textarea
-                     onChange={(e) => setNotes({ ...notes, description: e.target.value }) }
+                     onChange={(event) =>
+                        setNotes({ ...notes, description: event.target.value })
+                     }
                   />
                </GridItem>
                <GridItem>
-                  <Button onClick={onSubmit} colorScheme="blue">
+                  <Button onClick={handleSubmit} colorScheme="blue">
                      Submit
                   </Button>
                </GridItem>
