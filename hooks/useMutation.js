@@ -7,12 +7,15 @@ const useMutation = () => {
       isError: false
    });
 
-   const mutate = useCallback(async ({ url='', method='POST', payload={}} = {}) => {
+   const mutate = useCallback(async ({ url='', method='POST', payload={}, headers={}} = {}) => {
       try {
          const resp = await fetch(url, { 
             method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            headers: { 
+               "Content-Type": "application/json",
+               ...headers
+            },
+            ...(method != 'GET' && { body: JSON.stringify(payload) })
          });
          const res = resp.json();
          setData({ ...data, data: res, isLoading: false });
@@ -27,3 +30,5 @@ const useMutation = () => {
 }
 
 export default useMutation;
+
+export const baseURL = 'https://service.pace-unv.cloud/api';
