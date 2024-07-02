@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Flex, FormControl, Heading, Input, Stack, useToast } from '@chakra-ui/react';
-import Cookies from 'js-cookies';
+import Cookies from 'js-cookie';
 
 import useMutation, { baseURL } from '@/hooks/useMutation';
 import { useRouter } from 'next/router';
@@ -23,7 +23,7 @@ const Login = () => {
             position: 'top'
          });
       } else {
-         Cookies.setItem('user_token', resp?.data?.token, {
+         Cookies.set('user_token', resp?.data?.token, {
             expires: new Date(resp?.data?.expires_at),
             path: '/'
          });

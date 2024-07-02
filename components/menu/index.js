@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import Link from 'next/link';
-import Cookies from 'js-cookies';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { Menu, MenuButton, MenuList, MenuItem, Button, Avatar, useToast } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -19,9 +19,8 @@ const MenuHeader = () => {
    const { pathname, push } = useRouter();
    const { mutate } = useMutation();
    const toast = useToast();
-   const auth = Cookies.getItem('user_token')
    const { data } = useQueries({ prefixUrl: `${baseURL}/user/me`, headers: {
-      'Authorization': `Bearer ${auth}`
+      'Authorization': `Bearer ${Cookies.get('user_token')}`
    } });
    
    const bgActive = useCallback((path) => {
@@ -30,9 +29,8 @@ const MenuHeader = () => {
 
    const onLogout = async () => {
       const resp = await mutate({ 
-         url: `${baseURL}/logout`, 
-         method: 'GET', 
-         headers: { 'Authorization': `Bearer ${auth}` }
+         url: `${baseURL}/logout`,
+         headers: { 'Authorization': `Bearer ${Cookies.get('user_token')}` }
       });
       if(!resp.success){
          toast({
@@ -43,7 +41,7 @@ const MenuHeader = () => {
             position: 'top'
          });
       } else {
-         Cookies.removeItem('user_token');
+         Cookies.remove('user_token');
          push('/login');
       }
    }
